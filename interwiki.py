@@ -6,12 +6,15 @@ import re
 import urllib.request
 import sys
 
-def get_only_in_map(map):
-    return next(iter(map.values()))
 
-wikipedia_re = r'https?://..\.wikipedia.org/wiki/.*'
-wiktionary_re = r'https?://..\.wiktionary.org/wiki/.*'
-def wiki(url):
+class wiki:
+
+    def __init__(self, re):
+        self.re = re
+
+    def get_only_in_map(map):
+        return next(iter(map.values()))
+
     def get_article(url):
         m = re.search(r'https?://(..)\.(.*)\.org/wiki/(.*)', url)
         return (m.group(1), m.group(2), m.group(3))
@@ -20,52 +23,73 @@ def wiki(url):
         return 'fr' if from_lang == 'en' else 'en'
 
     def get_link(from_lang, site, article):
-        to_lang = lang(from_lang)
-        url = 'https://%s.%s.org/w/api.php?action=query&continue&format=json&prop=langlinks&titles=%s&lllang=%s' % (from_lang, site, urllib.parse.quote(article), to_lang)
+        to_lang = wiki.lang(from_lang)
+        url = (
+           'https://%s.%s.org/w/api.php'
+         + '?action=query&continue&format=json'
+         + '&prop=langlinks&titles=%s&lllang=%s'
+        ) % (from_lang, site, urllib.parse.quote(article), to_lang)
 
         h = urllib.request.urlopen(url)
         uft8reader = codecs.getreader("utf-8")
         j = json.load(uft8reader(h))
 
-        n = get_only_in_map(j['query']['pages'])['langlinks'][0]['*']
+        n = wiki.get_only_in_map(j['query']['pages'])['langlinks'][0]['*']
 
         return 'https://%s.%s.org/wiki/%s' % (to_lang, site, n)
 
-    (from_lang, site, article) = get_article(url)
-    return get_link(from_lang, site, article)
+    def __call__(self, url):
+        (from_lang, site, article) = wiki.get_article(url)
+        return wiki.get_link(from_lang, site, article)
 
-xkcd_re = r'https?://xkcd.com/.*'
-def xkcd(url):
-    number = re.search(r'https?://xkcd.com/(.*)/', url)
 
-    if number:
-        return 'http://explainxkcd.com/%s/' % (number.group(1))
-    else:
-        return 'http://explainxkcd.com/'
+class xkcd:
+    re = r'https?://xkcd.com/.*'
 
-boost_re = r'http://www.boost.org/doc/libs/.*'
-def boost(url):
-    what = re.match(r'http://www.boost.org/doc/libs/[\d_]*/(.*)', url)
+    def __call__(self, url):
+        number = re.search(r'https?://xkcd.com/(.*)/', url)
 
-    return 'http://www.boost.org/doc/libs/release/' + what.group(1)
+        if number:
+            return 'http://explainxkcd.com/%s/' % (number.group(1))
+        else:
+            return 'http://explainxkcd.com/'
 
-python_re = r'https?://docs.python.org/.*'
-def python(url):
-    version = sys.version_info
-    what = re.match(r'https?://docs.python.org/[\d.]*/(.*)', url)
 
-    return 'https://docs.python.org/%s.%s/%s' % (version[:2] + (what.group(1),))
+class boost:
+    re = r'http://www.boost.org/doc/libs/.*'
 
-map = {
-    wikipedia_re: wiki,
-    wiktionary_re: wiki,
-    xkcd_re: xkcd,
-    boost_re: boost,
-    python_re: python,
-}
+    def __call__(self, url):
+        what = re.match(r'http://www.boost.org/doc/libs/[\d_]*/(.*)', url)
 
-url = input()
-for expr in map:
-    if re.search(expr, url):
-        print(map[expr](url))
+        return 'http://www.boost.org/doc/libs/release/' + what.group(1)
 
+
+class python:
+    re = r'https?://docs.python.org/.*'
+    (major, minor) = sys.version_info[:2]
+
+    def __call__(self, url):
+        what = re.match(r'https?://docs.python.org/[\d.]*/(.*)', url)
+
+        return 'https://docs.python.org/%s.%s/%s' \
+            % (self.major, self.minor, what.group(1))
+
+
+def translate(url):
+    translators = (
+        boost(),
+        python(),
+        wiki(r'https?://..\.wikipedia.org/wiki/.*'),
+        wiki(r'https?://..\.wiktionary.org/wiki/.*'),
+        xkcd(),
+    )
+
+    for t in translators:
+        if re.search(t.re, url):
+            return t(url)
+
+
+if __name__ == '__main__':
+    translation = translate(input())
+    if translation:
+        print(translation)
