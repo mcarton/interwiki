@@ -16,7 +16,7 @@ class wiki:
         return next(iter(map.values()))
 
     def get_article(url):
-        m = re.search(r'https?://(..)\.(.*)\.org/wiki/(.*)', url)
+        m = re.search(r'https?://(..)\.(.*)\.org/wiki/([^#]*)(#.*)?', url)
         return (m.group(1), m.group(2), m.group(3))
 
     def lang(from_lang):
