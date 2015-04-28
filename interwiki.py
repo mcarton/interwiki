@@ -64,6 +64,17 @@ class boost:
         return 'http://www.boost.org/doc/libs/release/' + what.group(1)
 
 
+class java:
+    re = r'https?://docs.oracle.com/javase/.*/docs/api/.*'
+
+    def __call__(self, url):
+        what = re.match(
+            r'https?://docs.oracle.com/javase/.*/docs/api/(.*)', url
+        )
+
+        return 'https://docs.oracle.com/javase/8/docs/api/' + what.group(1)
+
+
 class python:
     re = r'https?://docs.python.org/.*'
     (major, minor) = sys.version_info[:2]
@@ -78,6 +89,7 @@ class python:
 def translate(url):
     translators = (
         boost(),
+        java(),
         python(),
         wiki(r'https?://..\.wikipedia.org/wiki/.*'),
         wiki(r'https?://..\.wiktionary.org/wiki/.*'),
