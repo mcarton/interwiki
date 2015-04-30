@@ -75,6 +75,19 @@ class java:
         return 'https://docs.oracle.com/javase/8/docs/api/' + what.group(1)
 
 
+class why3:
+    re = r'https?://why3.lri.fr/(doc|stdlib)-.*'
+
+    def __call__(self, url):
+        what = re.match(
+            r'http(s?)://why3.lri.fr/(doc|stdlib)-[^/]*/(.*)', url
+        )
+
+        return 'http{}://why3.lri.fr/{}-0.85/{}'.format(
+            what.group(1), what.group(2), what.group(3)
+        )
+
+
 class python:
     re = r'https?://docs.python.org/.*'
     (major, minor) = sys.version_info[:2]
@@ -91,6 +104,7 @@ def translate(url):
         boost(),
         java(),
         python(),
+        why3(),
         wiki(r'https?://..\.wikipedia.org/wiki/.*'),
         wiki(r'https?://..\.wiktionary.org/wiki/.*'),
         xkcd(),
