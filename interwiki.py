@@ -7,7 +7,12 @@ import urllib.request
 import sys
 
 
-class Wiki:
+class RegExTranslator:
+    def match(self, url):
+        return re.search(self.re, url)
+
+
+class Wiki(RegExTranslator):
 
     def __init__(self, re):
         self.re = re
@@ -43,7 +48,7 @@ class Wiki:
         return Wiki.get_link(from_lang, site, article)
 
 
-class Xkcd:
+class Xkcd(RegExTranslator):
     re = r'https?://xkcd.com/.*'
 
     def __call__(self, url):
@@ -55,7 +60,7 @@ class Xkcd:
             return 'http://explainxkcd.com/'
 
 
-class Boost:
+class Boost(RegExTranslator):
     re = r'http://www.boost.org/doc/libs/.*'
 
     def __call__(self, url):
@@ -64,7 +69,7 @@ class Boost:
         return 'http://www.boost.org/doc/libs/release/' + what.group(1)
 
 
-class Java:
+class Java(RegExTranslator):
     re = r'https?://docs.oracle.com/javase/.*/docs/api/.*'
 
     def __call__(self, url):
@@ -75,7 +80,7 @@ class Java:
         return 'https://docs.oracle.com/javase/8/docs/api/' + what.group(1)
 
 
-class Why3:
+class Why3(RegExTranslator):
     re = r'https?://why3.lri.fr/(doc|stdlib)-.*'
 
     def __call__(self, url):
@@ -88,7 +93,7 @@ class Why3:
         )
 
 
-class Python:
+class Python(RegExTranslator):
     re = r'https?://docs.python.org/.*'
     (major, minor) = sys.version_info[:2]
 
@@ -111,7 +116,7 @@ def translate(url):
     )
 
     for t in translators:
-        if re.search(t.re, url):
+        if t.match(url):
             return t(url)
 
 
