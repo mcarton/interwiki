@@ -7,7 +7,7 @@ import urllib.request
 import sys
 
 
-class wiki:
+class Wiki:
 
     def __init__(self, re):
         self.re = re
@@ -23,27 +23,27 @@ class wiki:
         return 'fr' if from_lang == 'en' else 'en'
 
     def get_link(from_lang, site, article):
-        to_lang = wiki.lang(from_lang)
+        to_lang = Wiki.lang(from_lang)
         url = (
            'https://%s.%s.org/w/api.php'
-         + '?action=query&continue&format=json'
-         + '&prop=langlinks&titles=%s&lllang=%s'
-        ) % (from_lang, site, urllib.parse.quote(article), to_lang)
+           '?action=query&continue&format=json'
+           '&prop=langlinks&titles=%s&lllang=%s'
+        ) % (from_lang, site, article, to_lang)
 
         h = urllib.request.urlopen(url)
         uft8reader = codecs.getreader("utf-8")
         j = json.load(uft8reader(h))
 
-        n = wiki.get_only_in_map(j['query']['pages'])['langlinks'][0]['*']
+        n = Wiki.get_only_in_map(j['query']['pages'])['langlinks'][0]['*']
 
         return 'https://%s.%s.org/wiki/%s' % (to_lang, site, n)
 
     def __call__(self, url):
-        (from_lang, site, article) = wiki.get_article(url)
-        return wiki.get_link(from_lang, site, article)
+        (from_lang, site, article) = Wiki.get_article(url)
+        return Wiki.get_link(from_lang, site, article)
 
 
-class xkcd:
+class Xkcd:
     re = r'https?://xkcd.com/.*'
 
     def __call__(self, url):
@@ -55,7 +55,7 @@ class xkcd:
             return 'http://explainxkcd.com/'
 
 
-class boost:
+class Boost:
     re = r'http://www.boost.org/doc/libs/.*'
 
     def __call__(self, url):
@@ -64,7 +64,7 @@ class boost:
         return 'http://www.boost.org/doc/libs/release/' + what.group(1)
 
 
-class java:
+class Java:
     re = r'https?://docs.oracle.com/javase/.*/docs/api/.*'
 
     def __call__(self, url):
@@ -75,7 +75,7 @@ class java:
         return 'https://docs.oracle.com/javase/8/docs/api/' + what.group(1)
 
 
-class why3:
+class Why3:
     re = r'https?://why3.lri.fr/(doc|stdlib)-.*'
 
     def __call__(self, url):
@@ -88,7 +88,7 @@ class why3:
         )
 
 
-class python:
+class Python:
     re = r'https?://docs.python.org/.*'
     (major, minor) = sys.version_info[:2]
 
@@ -101,13 +101,13 @@ class python:
 
 def translate(url):
     translators = (
-        boost(),
-        java(),
-        python(),
-        why3(),
-        wiki(r'https?://..\.wikipedia.org/wiki/.*'),
-        wiki(r'https?://..\.wiktionary.org/wiki/.*'),
-        xkcd(),
+        Boost(),
+        Java(),
+        Python(),
+        Why3(),
+        Wiki(r'https?://..\.wikipedia.org/wiki/.*'),
+        Wiki(r'https?://..\.wiktionary.org/wiki/.*'),
+        Xkcd(),
     )
 
     for t in translators:
