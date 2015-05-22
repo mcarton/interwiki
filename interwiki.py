@@ -12,6 +12,16 @@ class RegExTranslator:
         return re.search(self.re, url)
 
 
+class StartsWithTranslator:
+    def match(self, url):
+        if url.startswith('http://'):
+            url = url[len('http://'):]
+        elif url.startswith('https://'):
+            url = url[len('https://'):]
+
+        return url.startswith(self.begin)
+
+
 class Wiki(RegExTranslator):
 
     def __init__(self, re):
@@ -48,8 +58,8 @@ class Wiki(RegExTranslator):
         return Wiki.get_link(from_lang, site, article)
 
 
-class Xkcd(RegExTranslator):
-    re = r'https?://xkcd.com/.*'
+class Xkcd(StartsWithTranslator):
+    begin = 'xkcd.com/'
 
     def __call__(self, url):
         number = re.search(r'https?://xkcd.com/(.*)/', url)
@@ -60,8 +70,8 @@ class Xkcd(RegExTranslator):
             return 'http://explainxkcd.com/'
 
 
-class Boost(RegExTranslator):
-    re = r'http://www.boost.org/doc/libs/.*'
+class Boost(StartsWithTranslator):
+    begin = 'www.boost.org/doc/libs/'
 
     def __call__(self, url):
         what = re.match(r'http://www.boost.org/doc/libs/[\d_]*/(.*)', url)
@@ -93,8 +103,8 @@ class Why3(RegExTranslator):
         )
 
 
-class Python(RegExTranslator):
-    re = r'https?://docs.python.org/.*'
+class Python(StartsWithTranslator):
+    begin = 'docs.python.org/'
     (major, minor) = sys.version_info[:2]
 
     def __call__(self, url):
