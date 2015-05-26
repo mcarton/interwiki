@@ -114,10 +114,29 @@ class Python(StartsWithTranslator):
             % (self.major, self.minor, what.group(1))
 
 
+class GitHub(StartsWithTranslator):
+    begin = 'github.com/'
+
+    def __call__(self, url):
+        what = re.match(r'https?://github.com/([^/]*)/([^/]*)', url)
+
+        api_url = 'https://api.github.com/repos/{}/{}'.format(
+            what.group(1), what.group(2)
+        )
+        api_request = urllib.request.Request(api_url, headers={
+            'Accept': 'application/vnd.github.v3+json'
+        })
+        api_result = urllib.request.urlopen(api_request)
+        utf8reader = codecs.getreader("utf-8")
+
+        return json.load(utf8reader(api_result))['parent']['html_url']
+
+
 def translate(url):
     translators = (
         Boost(),
         Java(),
+        GitHub(),
         Python(),
         Why3(),
         Wiki(r'https?://..\.wikipedia.org/wiki/.*'),
