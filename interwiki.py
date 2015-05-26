@@ -46,8 +46,8 @@ class Wiki(RegExTranslator):
         ) % (from_lang, site, article, to_lang)
 
         h = urllib.request.urlopen(url)
-        uft8reader = codecs.getreader("utf-8")
-        j = json.load(uft8reader(h))
+        utf8reader = codecs.getreader("utf-8")
+        j = json.load(utf8reader(h))
 
         n = Wiki.get_only_in_map(j['query']['pages'])['langlinks'][0]['*']
 
