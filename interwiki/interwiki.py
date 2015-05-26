@@ -27,7 +27,11 @@ def translate(url):
             return t(url)
 
 
-if __name__ == '__main__':
+def main():
     translation = translate(input())
     if translation:
         print(translation)
+
+
+if __name__ == '__main__':
+    main()
