@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-import codecs
 import json
 import re
-import urllib.request
+import requests
 import sys
 
 
@@ -45,9 +44,7 @@ class Wiki(RegExTranslator):
            '&prop=langlinks&titles=%s&lllang=%s'
         ) % (from_lang, site, article, to_lang)
 
-        h = urllib.request.urlopen(url)
-        utf8reader = codecs.getreader("utf-8")
-        j = json.load(utf8reader(h))
+        j = json.loads(requests.get(url).text)
 
         n = Wiki.get_only_in_map(j['query']['pages'])['langlinks'][0]['*']
 
@@ -123,13 +120,10 @@ class GitHub(StartsWithTranslator):
         api_url = 'https://api.github.com/repos/{}/{}'.format(
             what.group(1), what.group(2)
         )
-        api_request = urllib.request.Request(api_url, headers={
-            'Accept': 'application/vnd.github.v3+json'
-        })
-        api_result = urllib.request.urlopen(api_request)
-        utf8reader = codecs.getreader("utf-8")
 
-        return json.load(utf8reader(api_result))['parent']['html_url']
+        j = json.loads(requests.get(api_url).text)
+
+        return j['parent']['html_url']
 
 
 def translate(url):
