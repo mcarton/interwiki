@@ -1,7 +1,9 @@
+from interwiki import translator
 from interwiki.rules import StartsWithTranslator
 import re
 
 
+@translator()
 class Xkcd(StartsWithTranslator):
     begin = 'xkcd.com/'
 

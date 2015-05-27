@@ -1,27 +1,11 @@
 #!/usr/bin/env python
 
 
-from interwiki.rules.Boost import Boost
-from interwiki.rules.GitHub import GitHub
-from interwiki.rules.Java import Java
-from interwiki.rules.Python import Python
-from interwiki.rules.Why3 import Why3
-from interwiki.rules.Wiki import Wiki
-from interwiki.rules.Xkcd import Xkcd
+from interwiki.translators import translators
+import interwiki.rules  # nopep8
 
 
 def translate(url):
-    translators = (
-        Boost(),
-        Java(),
-        GitHub(),
-        Python(),
-        Why3(),
-        Wiki(r'https?://..\.wikipedia.org/wiki/.*'),
-        Wiki(r'https?://..\.wiktionary.org/wiki/.*'),
-        Xkcd(),
-    )
-
     for t in translators:
         if t.match(url):
             return t(url)

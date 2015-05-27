@@ -1,7 +1,9 @@
+from interwiki import translator
 from interwiki.rules import RegExTranslator
 import re
 
 
+@translator()
 class Java(RegExTranslator):
     re = r'https?://docs.oracle.com/javase/.*/docs/api/.*'
 

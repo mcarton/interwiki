@@ -1,9 +1,11 @@
+from interwiki import translator
 from interwiki.rules import StartsWithTranslator
 import json
 import re
 import requests
 
 
+@translator()
 class GitHub(StartsWithTranslator):
     begin = 'github.com/'
 

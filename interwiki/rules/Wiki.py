@@ -1,3 +1,4 @@
+from interwiki import translator
 from interwiki.rules import RegExTranslator
 import json
 import re
@@ -12,6 +13,8 @@ def lang(from_lang):
     return 'fr' if from_lang == 'en' else 'en'
 
 
+@translator(r'https?://..\.wikipedia.org/wiki/.*')
+@translator(r'https?://..\.wiktionary.org/wiki/.*')
 class Wiki(RegExTranslator):
 
     def __init__(self, re):

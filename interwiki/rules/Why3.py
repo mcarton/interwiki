@@ -1,7 +1,9 @@
+from interwiki import translator
 from interwiki.rules import RegExTranslator
 import re
 
 
+@translator()
 class Why3(RegExTranslator):
     re = r'https?://why3.lri.fr/(doc|stdlib)-.*'
 

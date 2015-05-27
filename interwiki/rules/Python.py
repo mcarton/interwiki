@@ -1,8 +1,10 @@
+from interwiki import translator
 from interwiki.rules import StartsWithTranslator
 import re
 import sys
 
 
+@translator()
 class Python(StartsWithTranslator):
     begin = 'docs.python.org/'
     (major, minor) = sys.version_info[:2]
