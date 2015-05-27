@@ -1,4 +1,4 @@
-from rules import StartsWithTranslator
+from interwiki.rules import StartsWithTranslator
 import re
 
 

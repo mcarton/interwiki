@@ -1,10 +1,10 @@
-from rules import RegExTranslator
+from interwiki.rules import RegExTranslator
 import json
 import re
 import requests
 
 
-def __get_only_in_map(map):
+def get_only_in_map(map):
     return next(iter(map.values()))
 
 
@@ -31,7 +31,7 @@ class Wiki(RegExTranslator):
 
         j = json.loads(requests.get(url).text)
 
-        n = __get_only_in_map(j['query']['pages'])['langlinks'][0]['*']
+        n = get_only_in_map(j['query']['pages'])['langlinks'][0]['*']
 
         return 'https://%s.%s.org/wiki/%s' % (to_lang, site, n)
 

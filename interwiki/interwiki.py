@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 
-from rules.Boost import Boost
-from rules.GitHub import GitHub
-from rules.Java import Java
-from rules.Python import Python
-from rules.Why3 import Why3
-from rules.Wiki import Wiki
-from rules.Xkcd import Xkcd
+from interwiki.rules.Boost import Boost
+from interwiki.rules.GitHub import GitHub
+from interwiki.rules.Java import Java
+from interwiki.rules.Python import Python
+from interwiki.rules.Why3 import Why3
+from interwiki.rules.Wiki import Wiki
+from interwiki.rules.Xkcd import Xkcd
 
 
 def translate(url):

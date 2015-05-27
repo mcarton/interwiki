@@ -1,4 +1,4 @@
-from rules import RegExTranslator
+from interwiki.rules import RegExTranslator
 import re
 
 
