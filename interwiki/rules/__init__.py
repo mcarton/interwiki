@@ -1,11 +1,5 @@
-from .RegExTranslator import RegExTranslator
-from .StartsWithTranslator import StartsWithTranslator
+import os
 
-from .Boost import Boost
-from .GitHub import GitHub
-from .Java import Java
-from .Python import Python
-from .UGent import UGent
-from .Why3 import Why3
-from .Wiki import Wiki
-from .Xkcd import Xkcd
+for module in os.listdir(os.path.dirname(__file__)):
+    if module != '__init__.py' and module.endswith('.py'):
+        __import__('interwiki.rules.' + module[:-3], locals(), globals())

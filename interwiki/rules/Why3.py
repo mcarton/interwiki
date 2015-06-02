@@ -1,5 +1,5 @@
+from interwiki import RegExTranslator
 from interwiki import translator
-from interwiki.rules import RegExTranslator
 import re
 
 

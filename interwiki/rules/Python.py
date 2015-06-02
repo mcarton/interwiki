@@ -1,5 +1,5 @@
+from interwiki import StartsWithTranslator
 from interwiki import translator
-from interwiki.rules import StartsWithTranslator
 import re
 import sys
 
